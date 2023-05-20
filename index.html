@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    nav {
+	  height: 50px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1;
+	}
+	ul {
+	  list-style-type: none;
+	  margin: 0;
+	  padding: 0;
+	  overflow: hidden;
+	}
+	li {
+	  float: left;
+	}
+	a {
+	  display: block;
+	  color: green;
+	  text-align: center;
+	  padding: 14px 16px;
+	  text-decoration: none;
+	}
+	nav a:hover {
+	  background-color: green;
+	  color: #fff;
+      transform: scale(1.2);
+	}
+	nav a {
+	  transition: transform 0.3s ease;
+	}
+  .toggle-switch {
+      display: inline-block;
+      position: relative;
+      width: 60px;
+      height: 34px; 
+    }
+    .toggle-switch input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+    .dark-mode {
+      background-color: #222222;
+      color: #ffffff;
+    }
+    .toggle-switch.dark-mode .slider {
+      background-color: #444;
+    }
+    .toggle-switch.dark-mode input:checked + .slider {
+      background-color: #2196F3;
+    }
+    #buttondark {
+      margin-top: 10px;
+      float: right;
+      padding-right: 17px;
+    }
+    .dark-mode .container {
+      background-color: #222222;
+      color: #ffffff;
+    }
+    .dark-mode h1 {
+      color: yellow;
+    }
+    .dark-mode button {
+      background-color: #444;
+      color: #ffffff;
+    }
+    .dark-mode nav {
+      background-color: #444;
+    }
+    .dark-mode a {
+      color: #ffffff;
+    }
+    .dark-mode p{
+      color: green;
+    }
+    #generate {
+      border-radius: 30px;
+      background-color: #333;
+      color: #fff;
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      margin-top: 20px;
+      width: 200px;
+      text-align: center;
+      text-decoration: none;
+    }
+    @media screen and (max-width: 600px) {
+      #generate {
+        width: 150px;
+        font-size: 16px;
+      }
+    }
+    @keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+#generate:hover {
+  background-color: #333;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  color: red;
+  animation: pulse 1s infinite;
+}
+</style>
+</head>
+<body>
+<nav>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="https://aryak-mohanty.github.io/Projects/">List</a></li>
+    <li id="buttondark">
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggle1">
+        <span class="slider"></span>
+      </label>
+    </li>
+  </ul>
+</nav>
+<div class="container">
+  <div id="first-page">
+    <h1>IP Address Generator</h1>
+    <button onclick="generateAddress()" id="generate">Generate</button>
+  </div>
+  <div id="second-page" style="display: none;">
+    <h1>Your IP Address Was Located To Be At</h1>
+    <p>IP address: <span id="ip-address"></span></p>
+    <form>
+      <input type="hidden" id="ip-address-input">
+    </form>
+    
+  </div>
+</div>
+<script>
+  //dark-mode//
+  const toggleSwitch = document.querySelector('.toggle-switch input[type="checkbox"]');
+  const container = document.querySelector('.container');
+  toggleSwitch.addEventListener('change', function() {
+    if (this.checked) {
+      container.classList.add('dark-mode');
+    } else {
+      container.classList.remove('dark-mode');
+    }
+  });
+  const toggle1 = document.querySelector('#toggle1');
+  toggle1.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+  });
+  //ip//
+  function generateAddress() {
+  window.location.hash = "second-page";
+  fetchIpAddressAndDnsAddress();
+}
+function fetchIpAddressAndDnsAddress() {
+  var ipAddressElement = document.getElementById("ip-address");
+  var ipAddressInput = document.getElementById("ip-address-input");
+  var dnsAddressElement = document.getElementById("dns-address");
+  // Check if IP address is already cached
+  var cachedIpAddress = sessionStorage.getItem("ipAddress");
+  if (cachedIpAddress) {
+    ipAddressElement.textContent = cachedIpAddress;
+    ipAddressInput.value = cachedIpAddress;
+    fetchDnsAddress(cachedIpAddress);
+    saveIpAddress(cachedIpAddress); // Save IP address automatically
+  } else {
+    // Fetch IP Address
+    fetch("https://api.ipify.org?format=json")
+      .then(response => response.json())
+      .then(data => {
+        var ipAddress = data.ip;
+        ipAddressElement.textContent = ipAddress;
+        ipAddressInput.value = ipAddress;
+        sessionStorage.setItem("ipAddress", ipAddress);
+        fetchDnsAddress(ipAddress);
+        saveIpAddress(ipAddress); // Save IP address automatically
+      })
+      .catch(error => console.error(error));
+  }
+}
+function fetchDnsAddress(ipAddress) {
+  var dnsAddressElement = document.getElementById("dns-address");
+
+  fetch("dns_lookup.php?ip=" + ipAddress)
+    .then(response => response.text())
+    .then(data => {
+      dnsAddressElement.textContent = data;
+    })
+    .catch(error => console.error(error));
+}
+
+function saveIpAddress(ipAddress) {
+  var formData = new FormData();
+  formData.append("ip_address", ipAddress);
+
+  fetch('http://127.0.0.1:5000/save-ip', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.text())
+    .then(data => {
+      console.log(data); // Display the response from the server
+      // You can perform any additional actions here
+    })
+    .catch(error => console.error(error));
+}
+
+window.addEventListener('hashchange', function() {
+  var hash = window.location.hash.substr(1); // Get the hash value without the '#'
+  if (hash === 'second-page') {
+    document.getElementById('first-page').style.display = 'none';
+    document.getElementById('second-page').style.display = 'block';
+    fetchIpAddressAndDnsAddress();
+  } else {
+    document.getElementById('first-page').style.display = 'block';
+    document.getElementById('second-page').style.display = 'none';
+  }
+});
+// Check the initial hash value on page load
+window.addEventListener('load', function() {
+  var hash = window.location.hash.substr(1);
+  if (hash === 'second-page') {
+    document.getElementById('first-page').style.display = 'none';
+    document.getElementById('second-page').style.display = 'block';
+    fetchIpAddressAndDnsAddress();
+  }
+});
+</script>
+</body>
+</html>
